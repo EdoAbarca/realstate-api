@@ -14,31 +14,24 @@ jobs:
     steps:
       - name: Checkout del código
         uses: actions/checkout@v3
-
       - name: Configurar Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-
       - name: Cachear dependencias npm
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json', '**/package.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-        continue-on-error: true
-
       - name: Instalar dependencias
         run: npm ci
-
       - name: Ejecutar pruebas con Jest
         run: npm test
-
       - name: Reportar éxito
         if: success()
         run: echo "✅ API funcional en Node ${{ matrix.node }}"
-
       - name: Reportar error
         if: failure()
         run: echo "❌ Falla detectada en los tests para Node ${{ matrix.node }}"
